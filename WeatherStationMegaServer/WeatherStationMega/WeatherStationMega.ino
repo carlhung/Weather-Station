@@ -79,23 +79,26 @@ void loop() {
         digitalWrite(LED_BUILTIN, HIGH);
         goto startAgain; // return;
       }
-      
+
+      float DHTtempVal = dht.readTemperature();
       int humidityVal = (int)dht.readHumidity();
-      if (isnan(humidityVal)) { // Failed to load humidity
+      if (isnan(humidityVal) || isnan(DHTtempVal)) { // Failed to load humidity
         digitalWrite(LED_BUILTIN, HIGH);
         goto startAgain; // return;
       }
-
-      float tempVal = bmp.readTemperature();
+      
+      float BMPtempVal = bmp.readTemperature();
       float pressureVal = (bmp.readPressure() / 100);
 
+      String DHTtemp = String(DHTtempVal);
       String dryValue = String(dryness(DRYNESS_PIN));
       String notRaining = String(isNotRaining(IS_NOT_RAINING_PIN));
-      String temp = String(tempVal);
+      String BMPtemp = String(BMPtempVal);
       String humidity = String(humidityVal);
       String pressure = String(pressureVal);
 
-      printlnToClient(&chatServer, &temp);
+      printlnToClient(&chatServer, &BMPtemp);
+      printlnToClient(&chatServer, &DHTtemp);
       printlnToClient(&chatServer, &humidity);
       printlnToClient(&chatServer, &pressure);
       printlnToClient(&chatServer, &dryValue);
